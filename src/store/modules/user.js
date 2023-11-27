@@ -1,8 +1,11 @@
 // 引入对应的 token方法
 import {getToken,setToken,removeToken} from '@/utils/auth'
-import {login} from '@/api/user'
+import {login,getUserInfo,updatePassword} from '@/api/user'
 const state = {
-  token:getToken()  // 从缓存中读取初始值
+  token:getToken(),  // 从缓存中读取初始值
+  userInfo:{
+
+  }
 }
 
 const mutations = {
@@ -14,7 +17,10 @@ const mutations = {
   LOGOUT(state){
     // 删除token
     state.token = null;
-    removeToken()
+    removeToken()    
+  },
+  GETUSERINFO(state,userInfo){
+    state.userInfo = userInfo;
   }
 }
 
@@ -23,7 +29,20 @@ const actions = {
     let token = await login(data)
     // 登录成功后,会返回token    
     context.commit("LOGIN",token);
-  }
+  },
+  // 获取用户的基本资料
+  async getUserInfo(context){
+    const result = await getUserInfo(); 
+    context.commit("GETUSERINFO",result)
+  },
+  // 退出登录
+  logout(context){
+    // 提交删除token的方法
+    context.commit("LOGOUT")
+    // 删除用户信息
+    context.commit("GETUSERINFO",{});
+  },
+
 }
 
 export default{

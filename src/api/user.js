@@ -9,3 +9,19 @@ export function login(data){
     data
   })
 }
+
+export function getUserInfo(){
+  return request({
+    // 不写method,默认是get
+    url:'/sys/profile'
+  })
+}
+
+// 更新密码
+export function updatePassword(data){
+  return request({
+    url:'/sys/user/updatePass',
+    method:'put',
+    data
+  })
+}

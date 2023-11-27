@@ -2,6 +2,7 @@ import axios from 'axios'
 import store from '@/store'
 // 引入Message作为this.$message的提示消息
 import {Message} from 'element-ui'
+import router from '@/router'
 
 // 创建一个新的axios实例
 const service = axios.create({
@@ -40,7 +41,14 @@ service.interceptors.response.use((response)=>{
           })  
       return Promise.reject(new Error(message))
     }
-},(error)=>{
+},async (error)=>{
+  if (error.response.status == 401){
+    // 说明token超时或者错误了
+    // 此时调用退出登录的action
+    await store.dispatch("user/logout")
+    // 登出后跳到主页
+    router.push("/login")
+  }
   Message({
     type:'error',
     message:error.message

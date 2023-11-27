@@ -8,7 +8,7 @@ import store from "@/store";
  */
 const whiteList = ['/login','/404']
 router.beforeEach(
-  (to,from,next) => {
+  async (to,from,next) => {
     // 开启进度条
     nProgress.start();
     if (store.getters.token){
@@ -20,6 +20,11 @@ router.beforeEach(
         nProgress.done();
       }
       else{
+        // 判断是否获取过用户信息
+        if (!store.getters.userId){
+          // 没有userId,就进行获取
+          await store.dispatch("user/getUserInfo")
+        }
         // 存在token且访问的不是登录页
         // 放行
         next();
