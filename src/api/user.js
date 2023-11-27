@@ -1,24 +1,11 @@
 import request from '@/utils/request'
 
-export function login(data) {
+// 声明一个函数,传入对应的data数据,得到请求的内容,并进行返回
+// 在外界通过await和async来触发
+export function login(data){
   return request({
-    url: '/vue-admin-template/user/login',
-    method: 'post',
+    url:'/sys/login',
+    method:'post',
     data
-  })
-}
-
-export function getInfo(token) {
-  return request({
-    url: '/vue-admin-template/user/info',
-    method: 'get',
-    params: { token }
-  })
-}
-
-export function logout() {
-  return request({
-    url: '/vue-admin-template/user/logout',
-    method: 'post'
   })
 }
