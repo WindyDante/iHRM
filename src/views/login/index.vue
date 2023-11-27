@@ -103,7 +103,7 @@ export default {
       this.$refs.form.validate((isOk) => {
         // validate会传入一个参数,这个参数表示整个form表单的验证是否通过了
         if (isOk) {
-          alert("校验通过");
+          this.$store.dispatch("user/login", this.loginForm);
         }
       });
     },
