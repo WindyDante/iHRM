@@ -40,7 +40,7 @@ module.exports = {
     proxy:{
       // path:代理的目标服务器的地址
       '/api':{
-        target:'https://heimahr.itheima.net/'
+        target:'https://heimahr.itheima.net'
       }
     }
     // before: require('./mock/mock-server.js')   基础模板做的模拟数据  会拦截请求
