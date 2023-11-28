@@ -115,3 +115,51 @@ export function param2Obj(url) {
   })
   return obj
 }
+
+// 更简单的写法
+/**
+ * list transListToTreeData
+ */
+export function transListToTreeData(list,pid){
+  // arr是整合后的所有内容
+  const arr = []
+
+  list.forEach(item=>{
+    // 遍历传入的数据
+    if (item.pid == pid){
+      // 找到了匹配的菜单
+      arr.push(item)
+      // 传入数据和父菜单的id,就可以找到对应的子菜单
+      const children = transListToTreeData(list,item.id);
+      item.children = children;
+    }
+  })
+  return arr;
+}
+
+ // 递归数组,拿到数据
+ /**
+  * list to tree
+  * @param {} tree 
+  * @param {*} pid 
+  * @returns 
+  */
+export function getTreeList(tree, pid) {
+  // pid与父级id是相同的,我们需要先拿到一级菜单的内容
+  let oneMenu = [];
+  tree.forEach((item) => {
+    if (item.pid == pid) {
+      // 添加到一级菜单中
+      oneMenu.push(item);
+    }
+  });
+  // 拿到一级菜单后,遍历并递归原数组,并让pid变为一级菜单的id
+  oneMenu.forEach((item) => {
+    // 拿到一级菜单中的每一项
+    // 对其进行递归,传入总菜单和对应的id,因为id所对应的就是其子菜单的pid
+    // 这时候,二次递归,就会拿到对应的所有二级菜单
+    let backMenu = this.getTreeList(tree, item.id);
+    item.children = backMenu;
+  });
+  return oneMenu;
+}
