@@ -1,54 +1,57 @@
-import router  from "@/router";
-import nProgress from "nprogress";
+import router from '@/router'
+import nprogress from 'nprogress'
 import 'nprogress/nprogress.css'
-import store from "@/store";
+import store from '@/store'
+import { asyncRoutes } from '@/router'
 
 /**
- * 前置守卫
- */
-const whiteList = ['/login','/404']
-router.beforeEach(
-  async (to,from,next) => {
-    // 开启进度条
-    nProgress.start();
-    if (store.getters.token){
-      // 存在token
-      if (to.path === '/login'){
-        // 存在token且访问的是登录页,则跳转到主页
-        next('/');
-        // next(地址)不执行后置路由守卫,所以进度条没有关闭,需要手动关闭
-        nProgress.done();
-      }
-      else{
-        // 判断是否获取过用户信息
-        if (!store.getters.userId){
-          // 没有userId,就进行获取
-          await store.dispatch("user/getUserInfo")
-        }
-        // 存在token且访问的不是登录页
-        // 放行
-        next();
+ *前置守卫
+ *
+*/
+
+const whiteList = ['/login', '/404']
+router.beforeEach(async(to, from, next) => {
+  nprogress.start()
+  if (store.getters.token) {
+    // 存在token
+    if (to.path === '/login') {
+      // 跳转到主页
+      next('/') // 中转到主页
+      // next（地址）并没有执行后置守卫
+      nprogress.done()
+    } else {
+      // 判断是否获取过资料
+      if (!store.getters.userId) {
+        const { roles } = await store.dispatch('user/getUserInfo')
+        // console.log(roles.menus) // 数组 不确定 可能是8个 1个 0个
+        // console.log(asyncRoutes) // 数组 8个
+        const filterRoutes = asyncRoutes.filter(item => {
+          // return true/false
+          return roles.menus.includes(item.name)
+        }) // 筛选后的路由
+        store.commit('user/setRoutes', filterRoutes)
+        router.addRoutes([...filterRoutes, { path: '*', redirect: '/404', hidden: true }]) // 添加动态路由信息到路由表
+        // router添加动态路由之后 需要转发一下
+        next(to.path) // 目的是让路由拥有信息 router的已知缺陷
+      } else {
+        next() // 放过
       }
     }
-    else{
-      // 没有token
-      if (whiteList.includes(to.path)){
-        // 不存在token且访问的是登录页,则跳转到登录页
-        next();
-      }
-      else{
-        // 不存在token且访问的不是登录页
-        // 放行
-        next('/login');
-        nProgress.done();
-      }
+  } else {
+    // 没有token
+    if (whiteList.includes(to.path)) {
+      next()
+    } else {
+      next('/login') // 中转到登录页
+      nprogress.done()
     }
   }
-);
+})
 
-/**
+/** *
  * 后置守卫
- */
-router.afterEach(()=>{
-  nProgress.done();
-});
+ * **/
+router.afterEach(() => {
+  console.log('123')
+  nprogress.done()
+})

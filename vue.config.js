@@ -27,8 +27,7 @@ module.exports = {
   publicPath: '/',
   outputDir: 'dist',
   assetsDir: 'static',
-  lintOnSave: false,
-  // lintOnSave: process.env.NODE_ENV === 'development',
+  lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
   devServer: {
     port: port,
@@ -37,13 +36,12 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    proxy:{
-      // path:代理的目标服务器的地址
-      '/api':{
-        target:'https://heimahr.itheima.net'
+    proxy: {
+      '/api': {
+        target: 'https://heimahr.itheima.net'
       }
     }
-    // before: require('./mock/mock-server.js')   基础模板做的模拟数据  会拦截请求
+    // before: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
@@ -71,7 +69,6 @@ module.exports = {
     config.plugins.delete('prefetch')
 
     // set svg-sprite-loader
-    // 设置 svg精灵图的加载
     config.module
       .rule('svg')
       .exclude.add(resolve('src/icons'))
